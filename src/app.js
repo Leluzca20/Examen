@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import { productosRoutes } from "./routes/productos.routes.js";
 
 export const app = express();
@@ -8,7 +9,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use("/", (req, res) => res.json({ message: "API Examen - usar /api/v1/productos" }));
+// Serve frontend static files under /public
+app.use('/public', express.static(path.join(process.cwd(), 'public')));
+
+// Public root info (only for GET /)
+app.get("/", (req, res) => res.json({ message: "API Examen - usar /api/v1/productos" }));
+
+// Serve frontend assets at root (e.g., /styles.css, /app.js)
+app.use(express.static(path.join(process.cwd(), 'public')));
+
+// API routes
 app.use("/api/v1/productos", productosRoutes);
 
 // 404
